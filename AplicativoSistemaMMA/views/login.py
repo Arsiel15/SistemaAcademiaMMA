@@ -42,6 +42,8 @@ class LoginWindow:
             command=self.validar_login
         )
         boton_login.pack(pady=20)
+        
+        self.app.bind("<Return>", lambda event: self.validar_login())
 
     def validar_login(self):
 

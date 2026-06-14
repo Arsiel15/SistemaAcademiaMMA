@@ -22,7 +22,7 @@ class MenuWindow:
 
         bienvenida = ctk.CTkLabel(
             self.app,
-            text=f"Bienvenido {rol}",
+            text=f"Bienvenido al Sistema MMA\nRol: {rol}",
             font=("Arial", 18)
         )
         bienvenida.pack(pady=10)

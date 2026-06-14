@@ -20,7 +20,15 @@ class AlumnosWindow:
         )
         titulo.pack(pady=20)
 
-        # Nombre
+        # Contador
+        self.lbl_total = ctk.CTkLabel(
+            self.app,
+            text="Total alumnos registrados: 0",
+            font=("Arial", 14, "bold")
+        )
+        self.lbl_total.pack(pady=5)
+
+        # Campos
         self.nombre = ctk.CTkEntry(
             self.app,
             placeholder_text="Nombre",
@@ -28,7 +36,6 @@ class AlumnosWindow:
         )
         self.nombre.pack(pady=5)
 
-        # Apellido
         self.apellido = ctk.CTkEntry(
             self.app,
             placeholder_text="Apellido",
@@ -36,7 +43,6 @@ class AlumnosWindow:
         )
         self.apellido.pack(pady=5)
 
-        # Edad
         self.edad = ctk.CTkEntry(
             self.app,
             placeholder_text="Edad",
@@ -44,7 +50,6 @@ class AlumnosWindow:
         )
         self.edad.pack(pady=5)
 
-        # Teléfono
         self.telefono = ctk.CTkEntry(
             self.app,
             placeholder_text="Teléfono",
@@ -52,7 +57,6 @@ class AlumnosWindow:
         )
         self.telefono.pack(pady=5)
 
-        # Correo
         self.correo = ctk.CTkEntry(
             self.app,
             placeholder_text="Correo",
@@ -60,7 +64,7 @@ class AlumnosWindow:
         )
         self.correo.pack(pady=5)
 
-        # Botón Guardar
+        # Botón guardar
         boton_guardar = ctk.CTkButton(
             self.app,
             text="Guardar Alumno",
@@ -68,7 +72,7 @@ class AlumnosWindow:
         )
         boton_guardar.pack(pady=10)
 
-        # Botón Volver
+        # Botón volver
         boton_volver = ctk.CTkButton(
             self.app,
             text="Volver",
@@ -78,6 +82,7 @@ class AlumnosWindow:
         )
         boton_volver.pack(pady=5)
 
+        # Eliminación
         self.id_eliminar = ctk.CTkEntry(
             self.app,
             placeholder_text="ID Alumno a eliminar",
@@ -89,11 +94,12 @@ class AlumnosWindow:
             self.app,
             text="Eliminar Alumno",
             fg_color="darkred",
+            hover_color="#8B0000",
             command=self.eliminar_alumno
         )
         boton_eliminar.pack(pady=10)
 
-        # Lista de alumnos
+        # Lista
         self.lista_alumnos = ctk.CTkTextbox(
             self.app,
             width=550,
@@ -111,7 +117,7 @@ class AlumnosWindow:
         telefono = self.telefono.get().strip()
         correo = self.correo.get().strip()
 
-        # Validar campos vacíos
+        # Validaciones
         if not nombre or not apellido or not edad or not telefono or not correo:
             messagebox.showerror(
                 "Error",
@@ -119,7 +125,6 @@ class AlumnosWindow:
             )
             return
 
-        # Validar edad
         if not edad.isdigit():
             messagebox.showerror(
                 "Error",
@@ -127,7 +132,6 @@ class AlumnosWindow:
             )
             return
 
-        # Validar teléfono
         if not telefono.isdigit():
             messagebox.showerror(
                 "Error",
@@ -135,7 +139,6 @@ class AlumnosWindow:
             )
             return
 
-        # Validar longitud teléfono
         if len(telefono) != 10:
             messagebox.showerror(
                 "Error",
@@ -143,7 +146,6 @@ class AlumnosWindow:
             )
             return
 
-        # Validar correo
         if "@" not in correo or "." not in correo:
             messagebox.showerror(
                 "Error",
@@ -151,9 +153,31 @@ class AlumnosWindow:
             )
             return
 
-        # Guardar en SQLite
         conexion = sqlite3.connect("mma.db")
         cursor = conexion.cursor()
+
+        # Evitar duplicados
+        cursor.execute("""
+        SELECT * FROM alumnos
+        WHERE nombre = ?
+        AND apellido = ?
+        AND telefono = ?
+        """, (
+            nombre,
+            apellido,
+            telefono
+        ))
+
+        existe = cursor.fetchone()
+
+        if existe:
+            conexion.close()
+
+            messagebox.showerror(
+                "Error",
+                "El alumno ya se encuentra registrado"
+            )
+            return
 
         cursor.execute("""
         INSERT INTO alumnos
@@ -182,10 +206,7 @@ class AlumnosWindow:
         self.telefono.delete(0, "end")
         self.correo.delete(0, "end")
 
-        # Actualizar lista
         self.cargar_alumnos()
-
-
 
     def cargar_alumnos(self):
 
@@ -203,6 +224,10 @@ class AlumnosWindow:
         alumnos = cursor.fetchall()
 
         conexion.close()
+
+        self.lbl_total.configure(
+            text=f"Total alumnos registrados: {len(alumnos)}"
+        )
 
         self.lista_alumnos.insert(
             "end",
@@ -225,7 +250,7 @@ class AlumnosWindow:
                 f"Edad: {alumno[3]}\n"
                 f"Teléfono: {alumno[4]}\n"
                 f"Correo: {alumno[5]}\n"
-                f"{'-'*40}\n"
+                f"{'-' * 40}\n"
             )
 
     def eliminar_alumno(self):
@@ -233,7 +258,6 @@ class AlumnosWindow:
         id_alumno = self.id_eliminar.get().strip()
 
         if not id_alumno.isdigit():
-
             messagebox.showerror(
                 "Error",
                 "Ingrese un ID válido"
