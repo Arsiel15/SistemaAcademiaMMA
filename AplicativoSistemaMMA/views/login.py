@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import sqlite3
 from tkinter import messagebox
-
+from views.menu import MenuWindow
 
 class LoginWindow:
 
@@ -66,10 +66,10 @@ class LoginWindow:
 
             rol = resultado[0]
 
-            messagebox.showinfo(
-                "Bienvenido",
-                f"Inicio de sesión exitoso\nRol: {rol}"
-            )
+            self.app.destroy()
+
+            menu = MenuWindow(rol)
+            menu.run()
 
         else:
 
