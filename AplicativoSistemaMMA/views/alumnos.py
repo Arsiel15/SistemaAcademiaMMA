@@ -10,7 +10,7 @@ class AlumnosWindow:
         self.app = ctk.CTkToplevel()
 
         self.app.title("Gestión de Alumnos")
-        self.app.geometry("700x600")
+        self.app.geometry("700x650")
 
         titulo = ctk.CTkLabel(
             self.app,
@@ -59,7 +59,16 @@ class AlumnosWindow:
             text="Guardar Alumno",
             command=self.guardar_alumno
         )
-        boton_guardar.pack(pady=20)
+        boton_guardar.pack(pady=15)
+
+        self.lista_alumnos = ctk.CTkTextbox(
+            self.app,
+            width=550,
+            height=250
+        )
+        self.lista_alumnos.pack(pady=15)
+
+        self.cargar_alumnos()
 
     def guardar_alumno(self):
 
@@ -91,3 +100,36 @@ class AlumnosWindow:
         self.edad.delete(0, "end")
         self.telefono.delete(0, "end")
         self.correo.delete(0, "end")
+
+        self.cargar_alumnos()
+
+    def cargar_alumnos(self):
+
+        self.lista_alumnos.delete("1.0", "end")
+
+        conexion = sqlite3.connect("mma.db")
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+        SELECT nombre, apellido, edad, telefono, correo
+        FROM alumnos
+        """)
+
+        alumnos = cursor.fetchall()
+
+        conexion.close()
+
+        self.lista_alumnos.insert(
+            "end",
+            "===== ALUMNOS REGISTRADOS =====\n\n"
+        )
+
+        for i, alumno in enumerate(alumnos, start=1):
+
+            self.lista_alumnos.insert(
+                "end",
+                f"{i}. {alumno[0]} {alumno[1]}\n"
+                f"   Edad: {alumno[2]}\n"
+                f"   Teléfono: {alumno[3]}\n"
+                f"   Correo: {alumno[4]}\n\n"
+            )
