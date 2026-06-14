@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from views.alumnos import AlumnosWindow
 
 
 class MenuWindow:
@@ -29,7 +30,8 @@ class MenuWindow:
         self.btn_alumnos = ctk.CTkButton(
             self.app,
             text="Gestión de Alumnos",
-            width=250
+            width=250,
+            command=self.abrir_alumnos
         )
         self.btn_alumnos.pack(pady=10)
 
@@ -42,6 +44,10 @@ class MenuWindow:
             command=self.app.destroy
         )
         self.btn_salir.pack(pady=10)
+
+    def abrir_alumnos(self):
+
+        ventana = AlumnosWindow()
 
     def run(self):
         self.app.mainloop()
