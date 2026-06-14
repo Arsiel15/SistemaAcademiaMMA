@@ -1,5 +1,7 @@
 from database.database import crear_base_datos
+from views.login import LoginWindow
 
 crear_base_datos()
 
-print("Sistema MMA iniciado correctamente")
+app = LoginWindow()
+app.run()
