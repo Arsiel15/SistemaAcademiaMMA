@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from views.alumnos import AlumnosWindow
-
+from views.entrenadores import EntrenadoresWindow
+from views.pagos import PagosWindow
+from views.asistencia import AsistenciaWindow
 
 class MenuWindow:
 
@@ -27,13 +29,77 @@ class MenuWindow:
         )
         bienvenida.pack(pady=10)
 
-        self.btn_alumnos = ctk.CTkButton(
+        # ADMINISTRADOR
+        if rol == "Administrador":
+
+            self.btn_alumnos = ctk.CTkButton(
+                self.app,
+                text="Gestión de Alumnos",
+                width=250,
+                command=self.abrir_alumnos
+            )
+            self.btn_alumnos.pack(pady=10)
+
+            self.btn_entrenadores = ctk.CTkButton(
+                self.app,
+                text="Gestión de Entrenadores",
+                width=250,
+                command=self.abrir_entrenadores
+            )
+            self.btn_entrenadores.pack(pady=10)
+
+            self.btn_pagos = ctk.CTkButton(
+                self.app,
+                text="Gestión de Pagos",
+                width=250,
+                command=self.abrir_pagos
+            )
+            self.btn_pagos.pack(pady=10)
+
+        # RECEPCIONISTA
+        elif rol == "Recepcionista":
+
+            self.btn_alumnos = ctk.CTkButton(
+                self.app,
+                text="Gestión de Alumnos",
+                width=250,
+                command=self.abrir_alumnos
+            )
+            self.btn_alumnos.pack(pady=10)
+
+            self.btn_entrenadores = ctk.CTkButton(
+                self.app,
+                text="Gestión de Entrenadores",
+                width=250,
+                command=self.abrir_entrenadores
+            )
+            self.btn_entrenadores.pack(pady=10)
+
+            self.btn_pagos = ctk.CTkButton(
+                self.app,
+                text="Gestión de Pagos",
+                width=250,
+                command=self.abrir_pagos
+            )
+            self.btn_pagos.pack(pady=10)
+
+        # ENTRENADOR
+        elif rol == "Entrenador":
+
+            lbl_info = ctk.CTkLabel(
+                self.app,
+                text="Acceso de Entrenador\nConsulta de alumnos",
+                font=("Arial", 16)
+            )
+            lbl_info.pack(pady=10)
+
+        self.btn_asistencia = ctk.CTkButton(
             self.app,
-            text="Gestión de Alumnos",
+            text="Control de Asistencia",
             width=250,
-            command=self.abrir_alumnos
+            command=self.abrir_asistencia
         )
-        self.btn_alumnos.pack(pady=10)
+        self.btn_asistencia.pack(pady=10)
 
         self.btn_salir = ctk.CTkButton(
             self.app,
@@ -45,9 +111,25 @@ class MenuWindow:
         )
         self.btn_salir.pack(pady=10)
 
+
+
     def abrir_alumnos(self):
 
-        ventana = AlumnosWindow()
+        AlumnosWindow()
+
+    def abrir_entrenadores(self):
+
+        EntrenadoresWindow()
+    
+    def abrir_pagos(self):
+
+        PagosWindow()
+
+
+    def abrir_asistencia(self):
+
+        ventana = AsistenciaWindow()
 
     def run(self):
+
         self.app.mainloop()

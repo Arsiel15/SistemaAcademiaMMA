@@ -27,6 +27,44 @@ def crear_base_datos():
     )
     """)
 
+    #Tabla entrenadores
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS entrenadores (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        apellido TEXT NOT NULL,
+        especialidad TEXT,
+        telefono TEXT,
+        correo TEXT
+    )
+    """)
+
+    # Tabla pagos
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS pagos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        alumno_id INTEGER NOT NULL,
+        monto REAL NOT NULL,
+        fecha TEXT NOT NULL,
+        fecha_vencimiento TEXT NOT NULL,
+        concepto TEXT NOT NULL,
+        FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+    )
+    """)
+
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS asistencias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        alumno_id INTEGER NOT NULL,
+        fecha TEXT NOT NULL,
+        estado TEXT NOT NULL,
+        FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+    )
+    """)
+
     #Usuarios iniciales
     usuarios = [
         ("admin", "admin123", "Administrador"),

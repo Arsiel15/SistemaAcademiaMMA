@@ -3,19 +3,19 @@ from tkinter import messagebox
 import sqlite3
 
 
-class AlumnosWindow:
+class EntrenadoresWindow:
 
     def __init__(self):
 
         self.app = ctk.CTkToplevel()
 
-        self.app.title("Gestión de Alumnos")
+        self.app.title("Gestión de Entrenadores")
         self.app.geometry("750x800")
 
         # Título
         titulo = ctk.CTkLabel(
             self.app,
-            text="Gestión de Alumnos",
+            text="Gestión de Entrenadores",
             font=("Arial", 24, "bold")
         )
         titulo.pack(pady=20)
@@ -23,7 +23,7 @@ class AlumnosWindow:
         # Contador
         self.lbl_total = ctk.CTkLabel(
             self.app,
-            text="Total alumnos registrados: 0",
+            text="Total entrenadores registrados: 0",
             font=("Arial", 14, "bold")
         )
         self.lbl_total.pack(pady=5)
@@ -44,13 +44,13 @@ class AlumnosWindow:
         )
         self.apellido.pack(pady=5)
 
-        # Edad
-        self.edad = ctk.CTkEntry(
+        # Especialidad
+        self.especialidad = ctk.CTkEntry(
             self.app,
-            placeholder_text="Edad",
+            placeholder_text="Especialidad",
             width=300
         )
-        self.edad.pack(pady=5)
+        self.especialidad.pack(pady=5)
 
         # Teléfono
         self.telefono = ctk.CTkEntry(
@@ -71,8 +71,8 @@ class AlumnosWindow:
         # Guardar
         boton_guardar = ctk.CTkButton(
             self.app,
-            text="Guardar Alumno",
-            command=self.guardar_alumno
+            text="Guardar Entrenador",
+            command=self.guardar_entrenador
         )
         boton_guardar.pack(pady=10)
 
@@ -89,34 +89,34 @@ class AlumnosWindow:
         # Eliminar
         self.id_eliminar = ctk.CTkEntry(
             self.app,
-            placeholder_text="ID Alumno a eliminar",
+            placeholder_text="ID Entrenador a eliminar",
             width=300
         )
         self.id_eliminar.pack(pady=5)
 
         boton_eliminar = ctk.CTkButton(
             self.app,
-            text="Eliminar Alumno",
+            text="Eliminar Entrenador",
             fg_color="darkred",
             hover_color="#8B0000",
-            command=self.eliminar_alumno
+            command=self.eliminar_entrenador
         )
         boton_eliminar.pack(pady=10)
 
         # Editar
         self.id_editar = ctk.CTkEntry(
             self.app,
-            placeholder_text="ID Alumno a editar",
+            placeholder_text="ID Entrenador a editar",
             width=300
         )
         self.id_editar.pack(pady=5)
 
         boton_editar = ctk.CTkButton(
             self.app,
-            text="Actualizar Alumno",
+            text="Actualizar Entrenador",
             fg_color="green",
             hover_color="darkgreen",
-            command=self.editar_alumno
+            command=self.editar_entrenador
         )
         boton_editar.pack(pady=10)
 
@@ -130,47 +130,40 @@ class AlumnosWindow:
 
         boton_buscar = ctk.CTkButton(
             self.app,
-            text="Buscar Alumno",
-            command=self.buscar_alumno
+            text="Buscar Entrenador",
+            command=self.buscar_entrenador
         )
         boton_buscar.pack(pady=5)
 
         boton_mostrar_todos = ctk.CTkButton(
             self.app,
             text="Mostrar Todos",
-            command=self.cargar_alumnos
+            command=self.cargar_entrenadores
         )
         boton_mostrar_todos.pack(pady=5)
 
         # Lista
-        self.lista_alumnos = ctk.CTkTextbox(
+        self.lista_entrenadores = ctk.CTkTextbox(
             self.app,
             width=600,
             height=250
         )
-        self.lista_alumnos.pack(pady=20)
+        self.lista_entrenadores.pack(pady=20)
 
-        self.cargar_alumnos()
+        self.cargar_entrenadores()
 
-    def guardar_alumno(self):
+    def guardar_entrenador(self):
 
         nombre = self.nombre.get().strip()
         apellido = self.apellido.get().strip()
-        edad = self.edad.get().strip()
+        especialidad = self.especialidad.get().strip()
         telefono = self.telefono.get().strip()
         correo = self.correo.get().strip()
 
-        if not nombre or not apellido or not edad or not telefono or not correo:
+        if not nombre or not apellido or not especialidad or not telefono or not correo:
             messagebox.showerror(
                 "Error",
                 "Todos los campos son obligatorios"
-            )
-            return
-
-        if not edad.isdigit():
-            messagebox.showerror(
-                "Error",
-                "La edad debe ser numérica"
             )
             return
 
@@ -200,7 +193,7 @@ class AlumnosWindow:
 
         cursor.execute("""
         SELECT *
-        FROM alumnos
+        FROM entrenadores
         WHERE nombre = ?
         AND apellido = ?
         AND telefono = ?
@@ -213,23 +206,22 @@ class AlumnosWindow:
         existe = cursor.fetchone()
 
         if existe:
-
             conexion.close()
 
             messagebox.showerror(
                 "Error",
-                "El alumno ya se encuentra registrado"
+                "El entrenador ya se encuentra registrado"
             )
             return
 
         cursor.execute("""
-        INSERT INTO alumnos
-        (nombre, apellido, edad, telefono, correo)
+        INSERT INTO entrenadores
+        (nombre, apellido, especialidad, telefono, correo)
         VALUES (?, ?, ?, ?, ?)
         """, (
             nombre,
             apellido,
-            edad,
+            especialidad,
             telefono,
             correo
         ))
@@ -239,136 +231,113 @@ class AlumnosWindow:
 
         messagebox.showinfo(
             "Éxito",
-            "Alumno registrado correctamente"
+            "Entrenador registrado correctamente"
         )
 
         self.nombre.delete(0, "end")
         self.apellido.delete(0, "end")
-        self.edad.delete(0, "end")
+        self.especialidad.delete(0, "end")
         self.telefono.delete(0, "end")
         self.correo.delete(0, "end")
 
-        self.cargar_alumnos()
+        self.cargar_entrenadores()
 
-    def cargar_alumnos(self):
+    def cargar_entrenadores(self):
 
-        self.lista_alumnos.delete("1.0", "end")
+        self.lista_entrenadores.delete("1.0", "end")
 
         conexion = sqlite3.connect("mma.db")
         cursor = conexion.cursor()
 
         cursor.execute("""
-        SELECT id, nombre, apellido, edad, telefono, correo
-        FROM alumnos
+        SELECT id, nombre, apellido, especialidad, telefono, correo
+        FROM entrenadores
         ORDER BY id
         """)
 
-        alumnos = cursor.fetchall()
+        entrenadores = cursor.fetchall()
 
         conexion.close()
 
         self.lbl_total.configure(
-            text=f"Total alumnos registrados: {len(alumnos)}"
+            text=f"Total entrenadores registrados: {len(entrenadores)}"
         )
 
-        self.lista_alumnos.insert(
+        self.lista_entrenadores.insert(
             "end",
-            "===== ALUMNOS REGISTRADOS =====\n\n"
+            "===== ENTRENADORES REGISTRADOS =====\n\n"
         )
 
-        if not alumnos:
-
-            self.lista_alumnos.insert(
+        if not entrenadores:
+            self.lista_entrenadores.insert(
                 "end",
-                "No existen alumnos registrados.\n"
+                "No existen entrenadores registrados.\n"
             )
             return
 
-        for alumno in alumnos:
+        for entrenador in entrenadores:
 
-            self.lista_alumnos.insert(
+            self.lista_entrenadores.insert(
                 "end",
-                f"ID: {alumno[0]}\n"
-                f"Nombre: {alumno[1]} {alumno[2]}\n"
-                f"Edad: {alumno[3]}\n"
-                f"Teléfono: {alumno[4]}\n"
-                f"Correo: {alumno[5]}\n"
+                f"ID: {entrenador[0]}\n"
+                f"Nombre: {entrenador[1]} {entrenador[2]}\n"
+                f"Especialidad: {entrenador[3]}\n"
+                f"Teléfono: {entrenador[4]}\n"
+                f"Correo: {entrenador[5]}\n"
                 f"{'-'*40}\n"
             )
 
-    def buscar_alumno(self):
+    def buscar_entrenador(self):
 
         nombre_busqueda = self.buscar_nombre.get().strip()
 
         if not nombre_busqueda:
-
-            self.cargar_alumnos()
+            self.cargar_entrenadores()
             return
 
-        self.lista_alumnos.delete("1.0", "end")
+        self.lista_entrenadores.delete("1.0", "end")
 
         conexion = sqlite3.connect("mma.db")
         cursor = conexion.cursor()
 
         cursor.execute("""
-        SELECT id, nombre, apellido, edad, telefono, correo
-        FROM alumnos
+        SELECT id, nombre, apellido, especialidad, telefono, correo
+        FROM entrenadores
         WHERE nombre LIKE ?
         ORDER BY id
         """, (f"%{nombre_busqueda}%",))
 
-        alumnos = cursor.fetchall()
+        entrenadores = cursor.fetchall()
 
         conexion.close()
 
-        self.lista_alumnos.insert(
-            "end",
-            "===== RESULTADOS DE BÚSQUEDA =====\n\n"
-        )
-
-        if not alumnos:
-
-            self.lista_alumnos.insert(
+        if not entrenadores:
+            self.lista_entrenadores.insert(
                 "end",
-                "No se encontraron alumnos.\n"
+                "No se encontraron entrenadores."
             )
             return
 
-        for alumno in alumnos:
+        for entrenador in entrenadores:
 
-            self.lista_alumnos.insert(
+            self.lista_entrenadores.insert(
                 "end",
-                f"ID: {alumno[0]}\n"
-                f"Nombre: {alumno[1]} {alumno[2]}\n"
-                f"Edad: {alumno[3]}\n"
-                f"Teléfono: {alumno[4]}\n"
-                f"Correo: {alumno[5]}\n"
+                f"ID: {entrenador[0]}\n"
+                f"Nombre: {entrenador[1]} {entrenador[2]}\n"
+                f"Especialidad: {entrenador[3]}\n"
+                f"Teléfono: {entrenador[4]}\n"
+                f"Correo: {entrenador[5]}\n"
                 f"{'-'*40}\n"
             )
 
-    def editar_alumno(self):
+    def editar_entrenador(self):
 
-        id_alumno = self.id_editar.get().strip()
+        id_entrenador = self.id_editar.get().strip()
 
-        if not id_alumno.isdigit():
-
+        if not id_entrenador.isdigit():
             messagebox.showerror(
                 "Error",
                 "Ingrese un ID válido"
-            )
-            return
-
-        nombre = self.nombre.get().strip()
-        apellido = self.apellido.get().strip()
-        edad = self.edad.get().strip()
-        telefono = self.telefono.get().strip()
-        correo = self.correo.get().strip()
-
-        if not nombre or not apellido or not edad or not telefono or not correo:
-
-            messagebox.showerror(
-                "Error",
-                "Debe completar todos los campos para actualizar"
             )
             return
 
@@ -376,57 +345,37 @@ class AlumnosWindow:
         cursor = conexion.cursor()
 
         cursor.execute("""
-        UPDATE alumnos
+        UPDATE entrenadores
         SET nombre = ?,
             apellido = ?,
-            edad = ?,
+            especialidad = ?,
             telefono = ?,
             correo = ?
         WHERE id = ?
         """, (
-            nombre,
-            apellido,
-            edad,
-            telefono,
-            correo,
-            id_alumno
+            self.nombre.get(),
+            self.apellido.get(),
+            self.especialidad.get(),
+            self.telefono.get(),
+            self.correo.get(),
+            id_entrenador
         ))
 
         conexion.commit()
-
-        if cursor.rowcount == 0:
-
-            conexion.close()
-
-            messagebox.showerror(
-                "Error",
-                "No existe un alumno con ese ID"
-            )
-            return
-
         conexion.close()
 
         messagebox.showinfo(
             "Éxito",
-            "Alumno actualizado correctamente"
+            "Entrenador actualizado correctamente"
         )
 
-        self.id_editar.delete(0, "end")
+        self.cargar_entrenadores()
 
-        self.nombre.delete(0, "end")
-        self.apellido.delete(0, "end")
-        self.edad.delete(0, "end")
-        self.telefono.delete(0, "end")
-        self.correo.delete(0, "end")
+    def eliminar_entrenador(self):
 
-        self.cargar_alumnos()
+        id_entrenador = self.id_eliminar.get().strip()
 
-    def eliminar_alumno(self):
-
-        id_alumno = self.id_eliminar.get().strip()
-
-        if not id_alumno.isdigit():
-
+        if not id_entrenador.isdigit():
             messagebox.showerror(
                 "Error",
                 "Ingrese un ID válido"
@@ -437,25 +386,8 @@ class AlumnosWindow:
         cursor = conexion.cursor()
 
         cursor.execute(
-            "SELECT * FROM alumnos WHERE id = ?",
-            (id_alumno,)
-        )
-
-        alumno = cursor.fetchone()
-
-        if not alumno:
-
-            conexion.close()
-
-            messagebox.showerror(
-                "Error",
-                "No existe un alumno con ese ID"
-            )
-            return
-
-        cursor.execute(
-            "DELETE FROM alumnos WHERE id = ?",
-            (id_alumno,)
+            "DELETE FROM entrenadores WHERE id = ?",
+            (id_entrenador,)
         )
 
         conexion.commit()
@@ -463,9 +395,9 @@ class AlumnosWindow:
 
         messagebox.showinfo(
             "Éxito",
-            "Alumno eliminado correctamente"
+            "Entrenador eliminado correctamente"
         )
 
         self.id_eliminar.delete(0, "end")
 
-        self.cargar_alumnos()
+        self.cargar_entrenadores()
